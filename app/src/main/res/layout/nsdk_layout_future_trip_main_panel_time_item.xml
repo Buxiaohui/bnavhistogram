@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="60dp"
+    android:layout_height="170dp"
+    android:background="@drawable/histogram_item_bg_border_normal"
+    tools:background="@android:color/holo_green_light">
+
+
+    <RelativeLayout
+        android:id="@+id/duration_tx_container"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:id="@+id/time_tx"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:gravity="top"
+            android:textColor="#666666"
+            android:textSize="17dp"
+            tools:text="周一"
+            tools:textSize="20dp" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/eta_tag_tx"
+        android:layout_width="18dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="7.5dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/nsdk_drawable_rr_eta_tangle_shape" />
+
+    <TextView
+        android:id="@+id/duration_tx"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/eta_tag_tx"
+        android:layout_centerHorizontal="true"
+        android:maxLines="2"
+        android:text="29分"
+        android:textColor="#666666"
+        android:textSize="14dp"
+        tools:textSize="17dp" />
+</RelativeLayout>
+

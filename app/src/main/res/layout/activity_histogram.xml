@@ -9,27 +9,27 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/histogram"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="170dp"
         android:background="@android:color/white"
         tools:background="@android:color/holo_red_light" />
 
+    <!-- 宽度是中间竹子的宽度-->
     <ImageView
         android:layout_width="75dp"
         android:layout_height="30dp"
-        android:layout_centerHorizontal="true"
         android:layout_alignBottom="@id/histogram"
+        android:layout_centerHorizontal="true"
         android:background="@drawable/nsdk_drawable_future_trip_item_select_time_bg"
         android:visibility="visible" />
 
     <com.baidu.histogram.view.HistogramBottomHighLightView
         android:id="@+id/histogram_select"
         android:layout_width="75dp"
-        android:layout_height="29dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="5dp"
+        android:layout_height="30dp"
         android:layout_alignLeft="@id/histogram"
         android:layout_alignRight="@id/histogram"
-        android:layout_marginTop="160dp"
+        android:layout_alignBottom="@id/histogram"
+        android:layout_centerHorizontal="true"
         tools:background="@android:color/holo_green_light" />
 
 
@@ -43,7 +43,8 @@
     <View
         android:id="@+id/vertical_mid_line"
         android:layout_width="1.5dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/histogram"
         android:layout_centerHorizontal="true"
         android:background="#000000"
         android:visibility="visible"
@@ -51,7 +52,8 @@
 
     <View
         android:layout_width="75dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/histogram"
         android:layout_centerHorizontal="true"
         android:background="@drawable/histogram_item_bg_border"
         android:visibility="visible"

@@ -26,7 +26,6 @@ public class HistogramAdapter extends HistogramBaseAdapter<HistogramItem> {
 
     @Override
     protected void onBindViewHolder(ViewHolder holder, HistogramItem itemData, int position) {
-        View itemView = holder.itemView;
         TextView topTv = holder.getView(R.id.duration_tx);
         TextView bottomTv = holder.getView(R.id.time_tx);
         topTv.setText("" + position);

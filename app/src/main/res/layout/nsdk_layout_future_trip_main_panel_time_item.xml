@@ -11,6 +11,7 @@
         android:id="@+id/duration_tx_container"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
+        android:gravity="center"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true">
 
@@ -19,9 +20,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:gravity="top"
+            android:gravity="center"
             android:textColor="#666666"
-            android:textSize="17dp"
+            android:textSize="11dp"
             tools:text="周一"
             tools:textSize="20dp" />
     </RelativeLayout>

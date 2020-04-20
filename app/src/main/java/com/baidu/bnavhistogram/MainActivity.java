@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         mHistogramView.setAdapter(mHistogramAdapter);
 
         mTimeView = findViewById(R.id.histogram_select);
-        mTimeView.setRect(false);
+        mTimeView.setRect(true);
         mTimeAdapter = new HistogramTimeAdapter(mDataList);
         mTimeAdapter.setSizeDefiner(mSizeDefiner);
         mTimeView.setAdapter(mTimeAdapter);

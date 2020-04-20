@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import androidx.annotation.IntDef;
 
 public class Config {
+    public static boolean DEBUG_UI = BuildConfig.DEBUG;
     @IntDef({ItemState.EMPTY, ItemState.SELECT, ItemState.UN_SELECT})
     @Retention(RetentionPolicy.SOURCE)
     public @interface ItemState {

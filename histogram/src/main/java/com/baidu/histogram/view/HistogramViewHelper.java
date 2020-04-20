@@ -2,6 +2,7 @@ package com.baidu.histogram.view;
 
 import java.util.List;
 
+import com.baidu.histogram.Config;
 import com.baidu.histogram.callback.OnItemClickListener;
 import com.baidu.histogram.callback.OnRecyclerItemClickListener;
 import com.baidu.histogram.utils.LogUtil;
@@ -94,6 +95,7 @@ public class HistogramViewHelper<T> {
         // 裁剪bottom_middle露出区域
         initOnRecyclerItemClickListener();
         initScrollListener();
+        enableDebugUI(false);
     }
 
     private void initOnRecyclerItemClickListener() {
@@ -206,6 +208,14 @@ public class HistogramViewHelper<T> {
 
     private LinearLayoutManager getLayoutManager() {
         return mViewCallback.getLayoutManager();
+    }
+
+    /**
+     * 是否开启UI的debug，会出现边框，以便展示item位置信息
+     * @param debugUI
+     */
+    public void enableDebugUI(boolean debugUI) {
+        Config.DEBUG_UI = debugUI;
     }
 
     /**

@@ -2,6 +2,8 @@ package com.baidu.histogram.view;
 
 import java.util.List;
 
+import com.baidu.histogram.Config;
+import com.baidu.histogram.R;
 import com.baidu.histogram.callback.OnItemClickListener;
 import com.baidu.histogram.data.BaseItemData;
 
@@ -21,6 +23,7 @@ public abstract class HistogramBaseAdapter<T extends BaseItemData>
     protected OnItemClickListener mOnItemClickListener;
     protected ViewCallback mViewCallback;
     protected BaseSizeDefiner mSizeDefiner;
+
     public HistogramBaseAdapter(List<T> dataList) {
         this.mDataList = dataList;
     }

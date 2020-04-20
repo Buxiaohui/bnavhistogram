@@ -35,7 +35,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="7.5dp"
         android:layout_marginBottom="30dp"
-        android:background="@drawable/nsdk_drawable_rr_eta_tangle_shape" />
+        android:background="@drawable/eta_tangle_shape" />
 
     <TextView
         android:id="@+id/duration_tx"

@@ -16,7 +16,7 @@ public class HistogramAdapter extends HistogramBaseAdapter<HistogramItem> {
 
     @Override
     public int getLayoutId() {
-        return R.layout.nsdk_layout_future_trip_main_panel_time_item;
+        return R.layout.layout_time_item;
     }
 
     @Override

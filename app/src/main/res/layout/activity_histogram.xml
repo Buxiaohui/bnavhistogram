@@ -19,7 +19,7 @@
         android:layout_height="30dp"
         android:layout_alignBottom="@id/histogram"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/nsdk_drawable_future_trip_item_select_time_bg"
+        android:background="@drawable/drawable_item_select_time_bg"
         android:visibility="visible" />
 
     <com.baidu.histogram.view.HistogramBottomHighLightView
@@ -37,7 +37,7 @@
         android:id="@+id/mid_line"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@drawable/nsdk_drawable_future_trip_dash_shape"
+        android:background="@drawable/dash_shape"
         tools:layout_centerInParent="true" />
 
     <View

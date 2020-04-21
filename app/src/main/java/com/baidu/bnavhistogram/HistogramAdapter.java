@@ -28,8 +28,13 @@ public class HistogramAdapter extends HistogramBaseAdapter<HistogramItem> {
     protected void onBindViewHolder(ViewHolder holder, HistogramItem itemData, int position) {
         TextView topTv = holder.getView(R.id.duration_tx);
         TextView bottomTv = holder.getView(R.id.time_tx);
+        TextView tagTv = holder.getView(R.id.eta_tag_tx);
         topTv.setText("" + position);
         bottomTv.setText(TimeUtils.getTimeStamp(position));
+        if (itemData.isSelect()) {
+            tagTv.setBackgroundDrawable(tagTv.getContext().getDrawable(R.drawable.item_select_bg));
+        } else {
+            tagTv.setBackgroundDrawable(tagTv.getContext().getDrawable(R.drawable.item_unselect_bg));
+        }
     }
-
 }

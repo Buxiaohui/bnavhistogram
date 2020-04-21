@@ -29,7 +29,10 @@ public class VibrateHelper {
     }
 
     public static boolean isVibratePermissionEnabled(Context ctx) {
-        return ContextCompat.checkSelfPermission(ctx, Manifest.permission.VIBRATE) == PackageManager.PERMISSION_GRANTED;
+        boolean ret =
+                ContextCompat.checkSelfPermission(ctx, Manifest.permission.VIBRATE)
+                        == PackageManager.PERMISSION_GRANTED;
+        return ret;
     }
 
     public static boolean hasVibratePermission(@NonNull Context ctx) {

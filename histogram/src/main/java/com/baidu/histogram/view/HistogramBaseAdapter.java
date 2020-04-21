@@ -6,6 +6,7 @@ import com.baidu.histogram.Config;
 import com.baidu.histogram.R;
 import com.baidu.histogram.callback.OnItemClickListener;
 import com.baidu.histogram.data.BaseItemData;
+import com.baidu.histogram.utils.LogUtil;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,15 +43,6 @@ public abstract class HistogramBaseAdapter<T extends BaseItemData>
         notifyDataSetChanged();
     }
 
-    public OnItemClickListener getOnItemClickListener() {
-        return mOnItemClickListener;
-    }
-
-    public HistogramBaseAdapter setOnItemClickListener(@NonNull OnItemClickListener callback) {
-        this.mOnItemClickListener = callback;
-        return this;
-    }
-
     public HistogramBaseAdapter setSizeDefiner(@NonNull BaseSizeDefiner sizeDefiner) {
         this.mSizeDefiner = sizeDefiner;
         return this;
@@ -69,9 +61,12 @@ public abstract class HistogramBaseAdapter<T extends BaseItemData>
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
         View itemView = holder.itemView;
         itemView.setTag(position);
+        final T data = mDataList.get(position);
+        if (LogUtil.LOGGABLE) {
+            LogUtil.e(TAG, "onBindViewHolder,position:" + position + ",data:" + data);
+        }
         ViewGroup.LayoutParams itemViewLayoutParams = itemView.getLayoutParams();
         if (mViewCallback != null && position == mViewCallback.getCenterItemIndex()) {
             itemViewLayoutParams.width = mSizeDefiner.getItemSelectWidthPx();
@@ -79,17 +74,8 @@ public abstract class HistogramBaseAdapter<T extends BaseItemData>
             itemViewLayoutParams.width = mSizeDefiner.getItemWidthPx();
         }
         final View tagView = getTagView(holder);
-        setTagTvLayoutParamsDirectly(tagView, mDataList.get(position), position);
-        onBindViewHolder(holder, mDataList.get(position), position);
-        final int pos = position;
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mOnItemClickListener != null) {
-                    mOnItemClickListener.onItemClick(v, pos, mDataList.get(pos));
-                }
-            }
-        });
+        setTagTvLayoutParamsDirectly(tagView, data, position);
+        onBindViewHolder(holder, data, position);
     }
 
     protected abstract View getTagView(final ViewHolder holder);
@@ -111,7 +97,7 @@ public abstract class HistogramBaseAdapter<T extends BaseItemData>
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) tagView.getLayoutParams();
         lp.height = (int) itemData.getHeight();
         tagView.setLayoutParams(lp);
-        tagView.setPivotX(tagView.getWidth() / 2);
+        tagView.setPivotX(tagView.getWidth() >> 1);
         tagView.setPivotY((float) lp.height);
     }
 

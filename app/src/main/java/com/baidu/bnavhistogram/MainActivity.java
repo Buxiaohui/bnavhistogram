@@ -2,13 +2,12 @@ package com.baidu.bnavhistogram;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.baidu.bnavhistogram.data.HistogramItem;
 import com.baidu.histogram.utils.VibrateHelper;
 import com.baidu.histogram.view.BaseSizeDefiner;
-import com.baidu.histogram.view.HistogramBaseAdapter;
 import com.baidu.histogram.view.HistogramBottomHighLightView;
-import com.baidu.histogram.view.HistogramBottomViewBaseAdapter;
 import com.baidu.histogram.view.HistogramViewHelper;
 
 import android.Manifest;
@@ -38,7 +37,11 @@ public class MainActivity extends AppCompatActivity {
     private HistogramSizeDefiner mSizeDefiner;
     private HistogramViewHelper mHistogramViewHelper;
 
+    private VibrateHelper mVibrateHelper;
+
     private void init() {
+        mSizeDefiner = new HistogramSizeDefiner(this);
+        mVibrateHelper = new VibrateHelper(this);
         constructData();
         findViewById(R.id.scroll_to_pos_btn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        mSizeDefiner = new HistogramSizeDefiner(this);
 
         mHistogramView = findViewById(R.id.histogram);
         mHistogramMidLineView = findViewById(R.id.mid_line);
@@ -96,18 +98,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public HistogramBaseAdapter getHistogramAdapter() {
-                return mHistogramAdapter;
-            }
-
-            @Override
             public HistogramBottomHighLightView getHistogramBottomHighLightView() {
                 return mTimeView;
-            }
-
-            @Override
-            public HistogramBottomViewBaseAdapter getHistogramBottomHighLightViewAdapter() {
-                return mTimeAdapter;
             }
 
             @Override
@@ -116,10 +108,28 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public boolean enableSelectItemMoreWidth() {
-                return true;
+            public void onScroll(int index, View view, int midX) {
+                int curIndex = index;
+                int mid = midX;
+                // 柱子背景图
+                if (mid > mSizeDefiner.getPilllarAnimLeft() && mid < mSizeDefiner
+                        .getPilllarAnimRight()) {
+                    view.findViewById(R.id.eta_tag_tx)
+                            .setBackgroundDrawable(getDrawable(R.drawable.item_select_bg));
+                } else {
+                    view.findViewById(R.id.eta_tag_tx)
+                            .setBackgroundDrawable(getDrawable(R.drawable.item_unselect_bg));
+                }
+                // 震动
+                if (mid > mSizeDefiner.getPilllarAnimLeft() && mid < mSizeDefiner.getPilllarAnimRight()) {
+                    if (mDataList.get(curIndex).isHighLight()) {
+                        mDataList.get(curIndex).setHighLight(false);
+                        mVibrateHelper.mobileVibration(15);
+                    }
+                } else {
+                    mDataList.get(curIndex).setHighLight(true);
+                }
             }
-
 
         }, new HistogramViewHelper.DataCallback() {
             @Override
@@ -129,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public int getTotalItemCount() {
-                if(mDataList == null){
+                if (mDataList == null) {
                     return 0;
                 }
                 return mDataList.size();
@@ -147,7 +157,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClickHistogramItem(int lastCenterIndex, int index) {
-
+                for (int i = 0; i < mDataList.size(); i++) {
+                    mDataList.get(i).setSelect(i == index);
+                }
+                mHistogramAdapter.notifyDataSetChanged();
             }
         });
         // 初始化的时使得目标item居中
@@ -159,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
         mDataList = new ArrayList<>();
         for (int i = 0; i < 102; i++) {
             itemData = new HistogramItem();
+            itemData.setHeight(30 + new Random().nextInt(mSizeDefiner.dip2px(42)));
             mDataList.add(itemData);
         }
     }

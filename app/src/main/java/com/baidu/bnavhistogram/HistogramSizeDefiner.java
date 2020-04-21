@@ -12,11 +12,6 @@ public class HistogramSizeDefiner extends BaseSizeDefiner {
     }
 
     @Override
-    public int getDimensionPixelOffset(int dimenId) {
-        return mCtx.getResources().getDimensionPixelOffset(dimenId);
-    }
-
-    @Override
     public int dip2px(int dp) {
         return ScreenUtils.dip2px(mCtx, dp);
     }
@@ -27,11 +22,6 @@ public class HistogramSizeDefiner extends BaseSizeDefiner {
     }
 
     @Override
-    public int getHistogramLeftPaddingPx() {
-        return dip2px(0);
-    }
-
-    @Override
     public int getMaxItemCount() {
         return 7;
     }
@@ -39,21 +29,6 @@ public class HistogramSizeDefiner extends BaseSizeDefiner {
     @Override
     public double getCenterItemScaling() {
         return 1.5d;
-    }
-
-    @Override
-    public int getSelectTimeZoneHeight() {
-        return dip2px(29);
-    }
-
-    @Override
-    public int getSelectTimeZoneWidth() {
-        return dip2px(75);
-    }
-
-    @Override
-    public int getPanelBg9ImgPaddingPx() {
-        return 0;
     }
 
     @Override
@@ -77,12 +52,12 @@ public class HistogramSizeDefiner extends BaseSizeDefiner {
     }
 
     @Override
-    public int getItemTimeHeightPx() {
-        return dip2px(33);
+    public int getLeftMarginPx() {
+        return 0;
     }
 
     @Override
-    public int getItemTimeMarginPx() {
-        return dip2px(3);
+    public int getLeftPaddingPx() {
+        return 0;
     }
 }

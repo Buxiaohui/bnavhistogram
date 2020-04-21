@@ -22,11 +22,10 @@ public abstract class BaseSizeDefiner {
     protected int mHistogramWithPx;
     // 屏幕宽度
     protected int mScreenWithPx;
-    // 柱状图区左右间距,left=right
-    protected int mHistogramLeftPaddingPx;
-    // 单个item中柱子的左右边界
-    protected int mPillarLeft;
-    protected int mPillarRight;
+    // 柱状图区左右两侧padding,left=right
+    protected int mLeftPaddingPx;
+    // 柱状图区左右两侧margin,left=right
+    protected int mLeftMarginPx;
     // 柱子的最小高度
     protected int mMinHeightPx;
     // 柱子的最大高度
@@ -36,17 +35,8 @@ public abstract class BaseSizeDefiner {
     // 当item的中线达到边界内时，进行加粗等变化
     protected int mPilllarAnimLeft;
     protected int mPilllarAnimRight;
-    // 底部时间的高度
-    protected int mItemTimeHeightPx;
-    // 底部时间的margin
-    protected int mItemTimeMarginPx;
-
-    // 面板.9图阴影宽度,left=right
-    protected int mPanelBg9ImgLeftPaddingPx;
 
     protected double mScaleOfItemWidth;
-    protected int mSelectTimeZoneWidth;
-    protected int mSelectTimeZoneHeight;
 
     protected int mHistogramScrollOffset;
 
@@ -63,11 +53,9 @@ public abstract class BaseSizeDefiner {
         mScreenWithPx = getScreenWidthPx();
         // 正常宽度的柱子数量
         int normalWidthItemCount = mMaxItemCount / 2 * 2;
-        mSelectTimeZoneWidth = getSelectTimeZoneWidth();
-        mSelectTimeZoneHeight = getSelectTimeZoneHeight();
-        mHistogramLeftPaddingPx = getHistogramLeftPaddingPx();
-        mPanelBg9ImgLeftPaddingPx = getPanelBg9ImgPaddingPx();
-        mHistogramWithPx = mScreenWithPx - (mHistogramLeftPaddingPx << 1) - (mPanelBg9ImgLeftPaddingPx << 1);
+        mLeftPaddingPx = getLeftPaddingPx();
+        mLeftMarginPx = getLeftMarginPx();
+        mHistogramWithPx = mScreenWithPx - (mLeftPaddingPx << 1) - (mLeftMarginPx << 1);
 
         double itemWidth = mHistogramWithPx / (normalWidthItemCount + mSelectItemScaling);
         mItemWidthPx = (int) Math.ceil(itemWidth);
@@ -76,24 +64,15 @@ public abstract class BaseSizeDefiner {
 
         mScaleOfItemWidth = (1.0d * mItemSelectWidthPx) / (1.0d * mItemWidthPx);
 
-        mItemPillarWidthPx = getItemPillarWidthPx();
-
-        mPillarLeft = (mHistogramWithPx >> 1) - (mItemPillarWidthPx >> 1);
-        mPillarRight = (mHistogramWithPx >> 1) + (mItemPillarWidthPx >> 1);
-
         // 当普通柱子的中心x坐标处于[mPilllarAnimLeft ,mPilllarAnimRight]区间内就会开始动画(逐渐变宽度)
-        mPilllarAnimLeft = (mHistogramWithPx >> 1) - ((mItemWidthPx + mScreenWithPx) >> 1);
-        mPilllarAnimRight = (mHistogramWithPx >> 1) + ((mItemWidthPx + mScreenWithPx) >> 1);
+        mPilllarAnimLeft = (mHistogramWithPx >> 1) - ((mItemWidthPx ) >> 2);
+        mPilllarAnimRight = (mHistogramWithPx >> 1) + ((mItemWidthPx ) >> 2);
 
         mMinHeightPx = getMinHeightPx();
 
         mMaxHeightPx = getMaxHeightPx();
 
         mHistogramHeightPx = getHistogramHeightPx();
-
-        mItemTimeHeightPx = getItemTimeHeightPx();
-
-        mItemTimeMarginPx = getItemTimeMarginPx();
 
         int midX = mItemWidthPx >> 1;
         int halfScreen = mHistogramWithPx >> 1;
@@ -107,40 +86,61 @@ public abstract class BaseSizeDefiner {
         }
     }
 
-    public abstract int getDimensionPixelOffset(int dimenId);
-
+    /**
+     * @param dp 转 pix
+     * @return
+     */
     public abstract int dip2px(int dp);
 
+    /**
+     * @return 屏幕宽度，单位：像素
+     */
     public abstract int getScreenWidthPx();
 
-    public abstract int getHistogramLeftPaddingPx();
+    /**
+     * @return 柱状图区域左侧padding ，单位：像素
+     */
+    public abstract int getLeftMarginPx();
 
+    /**
+     * @return 柱状图区域左侧margin ，单位：像素
+     */
+    public abstract int getLeftPaddingPx();
+
+    /**
+     * @return 最多展示柱子数量
+     */
     public abstract int getMaxItemCount();
 
+    /**
+     * @return 居中的柱子宽度与两侧柱子的宽度比例
+     */
     public abstract double getCenterItemScaling();
 
-    public abstract int getSelectTimeZoneHeight();
-
-    public abstract int getSelectTimeZoneWidth();
-
-    public abstract int getPanelBg9ImgPaddingPx();
-
+    /**
+     * @return 柱子最小高度，单位：像素
+     */
     public abstract int getMinHeightPx();
 
+    /**
+     * @return 柱子最大高度，单位：像素
+     */
     public abstract int getMaxHeightPx();
 
     public abstract int getItemPillarWidthPx();
 
     public abstract int getHistogramHeightPx();
 
-    public abstract int getItemTimeHeightPx();
-
-    public abstract int getItemTimeMarginPx();
-
+    /**
+     * @return 柱状图的整个view的宽度
+     */
     public int getHistogramWithPx() {
         return mHistogramWithPx;
     }
 
+    /**
+     * @return 左侧占位柱子数量
+     */
     public int getLeftEmptyItemCount() {
         return getMaxItemCount() >> 1;
     }
@@ -149,24 +149,12 @@ public abstract class BaseSizeDefiner {
         return mHistogramScrollOffset;
     }
 
-    public double getScaleOfItemWidth() {
-        return mScaleOfItemWidth;
-    }
-
     public int getItemSelectWidthPx() {
         return mItemSelectWidthPx;
     }
 
     public int getItemWidthPx() {
         return mItemWidthPx;
-    }
-
-    public int getPillarLeft() {
-        return mPillarLeft;
-    }
-
-    public int getPillarRight() {
-        return mPillarRight;
     }
 
     public int getPilllarAnimLeft() {
@@ -185,20 +173,13 @@ public abstract class BaseSizeDefiner {
         sb.append(", mItemPillarWidthPx=").append(mItemPillarWidthPx);
         sb.append(", mHistogramWithPx=").append(mHistogramWithPx);
         sb.append(", mScreenWithPx=").append(mScreenWithPx);
-        sb.append(", mHistogramLeftPaddingPx=").append(mHistogramLeftPaddingPx);
-        sb.append(", mPillarLeft=").append(mPillarLeft);
-        sb.append(", mPillarRight=").append(mPillarRight);
+        sb.append(", mHistogramLeftPaddingPx=").append(mLeftPaddingPx);
         sb.append(", mMinHeightPx=").append(mMinHeightPx);
         sb.append(", mMaxHeightPx=").append(mMaxHeightPx);
         sb.append(", mHistogramHeightPx=").append(mHistogramHeightPx);
         sb.append(", mPilllarAnimLeft=").append(mPilllarAnimLeft);
         sb.append(", mPilllarAnimRight=").append(mPilllarAnimRight);
-        sb.append(", mItemTimeHeightPx=").append(mItemTimeHeightPx);
-        sb.append(", mItemTimeMarginPx=").append(mItemTimeMarginPx);
-        sb.append(", mPanelBg9ImgLeftPaddingPx=").append(mPanelBg9ImgLeftPaddingPx);
         sb.append(", mScaleOfItemWidth=").append(mScaleOfItemWidth);
-        sb.append(", mSelectTimeZoneWidth=").append(mSelectTimeZoneWidth);
-        sb.append(", mSelectTimeZoneHeight=").append(mSelectTimeZoneHeight);
         sb.append(", mHistogramScrollOffset=").append(mHistogramScrollOffset);
         sb.append('}');
         return sb.toString();

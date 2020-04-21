@@ -8,4 +8,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="HistogramLineStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1.5dp</item>
+        <item name="android:layerType">software</item>
+        <item name="android:visibility">gone</item>
+        <item name="android:background">@drawable/dash_shape</item>
+    </style>
+
 </resources>

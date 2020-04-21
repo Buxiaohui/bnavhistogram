@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class HistogramViewHelper<T> {
-    private static final String TAG = "FutureTripMainPanelHistogramView";
+    private static final String TAG = "HistogramViewHelper";
     private static final boolean PRINT_HIGH_FREQUENCY_LOG = true;
     protected Context mCtx;
 
@@ -58,9 +58,10 @@ public class HistogramViewHelper<T> {
         this.mViewCallback = viewCallback;
         this.mCtx = viewCallback.getContext();
         this.mHistogramView = viewCallback.getHistogramView();
-        this.mHistogramAdapter = viewCallback.getHistogramAdapter();
+        this.mHistogramAdapter = (HistogramBaseAdapter) mHistogramView.getAdapter();
         this.mHistogramBottomHighLightView = viewCallback.getHistogramBottomHighLightView();
-        this.mHistogramHighLightViewAdapter = viewCallback.getHistogramBottomHighLightViewAdapter();
+        this.mHistogramHighLightViewAdapter =
+                (HistogramBottomViewBaseAdapter) mHistogramBottomHighLightView.getAdapter();
         mSizeDefiner = viewCallback.getSizeDefiner();
 
         this.mDataCallback = dataCallback;
@@ -74,19 +75,6 @@ public class HistogramViewHelper<T> {
             @Override
             public int getCenterItemIndex() {
                 return mCurCenterItemIndex;
-            }
-        });
-        final OnItemClickListener onItemClickListener = new OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int index, Object data) {
-                onClickHistogramItem(index);
-            }
-        };
-        mHistogramAdapter.setOnItemClickListener(onItemClickListener);
-        mHistogramBottomHighLightView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                onItemClickListener.onItemClick(view, position, mDataCallback.getDataList().get(position));
             }
         });
         int initTimeViewOffsetIndex = mSizeDefiner.getLeftEmptyItemCount();
@@ -109,6 +97,9 @@ public class HistogramViewHelper<T> {
                         @Override
                         public void run() {
                             int index = (int) vh.itemView.getTag();
+                            if (LogUtil.LOGGABLE) {
+                                LogUtil.e(TAG, "onItemClick,index:" + index);
+                            }
                             if (mDataCallback.isEmptyItem(index)) {
                                 setCurSelectItemCenterHorizontalImmediately();
                             } else {
@@ -167,7 +158,7 @@ public class HistogramViewHelper<T> {
             return;
         }
         int histogramOff = calRecyclerViewOffset(getLayoutManager(), mHistogramView);
-        double timeDx = Math.round(histogramOff * mSizeDefiner.getScaleOfItemWidth());
+        double timeDx = Math.round(histogramOff * mSizeDefiner.getCenterItemScaling());
         double flagTimeDx = timeDx;
 
         int timeListViewCount = mHistogramHighLightViewAdapter.getCount();
@@ -195,8 +186,8 @@ public class HistogramViewHelper<T> {
             return;
         }
         int screen = mSizeDefiner.getHistogramWithPx();
-        int zoneWidth = mSizeDefiner.getSelectTimeZoneWidth() - mSizeDefiner.dip2px(10); // 时间轴的正中间椭圆形区域的宽度
-        int height = mSizeDefiner.getSelectTimeZoneHeight(); // 时间轴的正中间椭圆形区域的高度
+        int zoneWidth = mSizeDefiner.dip2px(75) - mSizeDefiner.dip2px(10); // 时间轴的正中间椭圆形区域的宽度
+        int height = mSizeDefiner.dip2px(29); // 时间轴的正中间椭圆形区域的高度
         int left = (screen - zoneWidth) >> 1;
         int top = 0;
         int right = (screen + zoneWidth) >> 1;
@@ -207,24 +198,16 @@ public class HistogramViewHelper<T> {
     }
 
     private LinearLayoutManager getLayoutManager() {
-        return mViewCallback.getLayoutManager();
+        return (LinearLayoutManager) mHistogramView.getLayoutManager();
     }
 
     /**
      * 是否开启UI的debug，会出现边框，以便展示item位置信息
+     *
      * @param debugUI
      */
     public void enableDebugUI(boolean debugUI) {
         Config.DEBUG_UI = debugUI;
-    }
-
-    /**
-     * @param index
-     * @param midX
-     *         index对应的柱子的中心x坐标
-     */
-    public void updateItemAppearanceOnScroll(int index, int midX) {
-
     }
 
     private void moveHightLightViewOnHistogramScroll() {
@@ -233,7 +216,7 @@ public class HistogramViewHelper<T> {
         }
         int histogramOff = calRecyclerViewOffset(getLayoutManager(), mHistogramView);
 
-        double timeDx = Math.round(histogramOff * mSizeDefiner.getScaleOfItemWidth());
+        double timeDx = Math.round(histogramOff * mSizeDefiner.getCenterItemScaling());
         double flagTimeDx = timeDx;
 
         int timeListViewCount = mHistogramHighLightViewAdapter.getCount();
@@ -411,7 +394,9 @@ public class HistogramViewHelper<T> {
                 int left = view1.getLeft();
                 int right = view1.getRight();
                 int mid = getMidX(left, right);
-                updateItemAppearanceOnScroll(i, mid);
+                if (mViewCallback != null) {
+                    mViewCallback.onScroll(i, view1, mid);
+                }
                 changeWidthOnScroll(i, view1);
             }
         }
@@ -419,7 +404,7 @@ public class HistogramViewHelper<T> {
     }
 
     private void changeWidthOnScroll(int index, View view) {
-        if (!mViewCallback.enableSelectItemMoreWidth()) {
+        if (!enableSelectItemMoreWidth()) {
             return;
         }
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
@@ -446,7 +431,10 @@ public class HistogramViewHelper<T> {
         view.setLayoutParams(layoutParams);
     }
 
-    public void onClickHistogramItem(int index) {
+    private void onClickHistogramItem(int index) {
+        if (LogUtil.LOGGABLE) {
+            LogUtil.e(TAG, "onClickHistogramItem,index:" + index);
+        }
         if (mCurCenterItemIndex == index) {
             mViewCallback.onCenterItemClick(index);
             return;
@@ -460,7 +448,7 @@ public class HistogramViewHelper<T> {
         mCurCenterItemIndex = index;
     }
 
-    public void onScrollEnd(int index) {
+    private void onScrollEnd(int index) {
         moveHightLightViewOnHistogramScroll(); // 停止滑动时底部高亮view兜底
         setSelectedItemCenterHorizontal(index); // 将对应柱子滑到中间
         // 外部实现 ，数据请求等动作
@@ -480,6 +468,10 @@ public class HistogramViewHelper<T> {
         getLayoutManager().scrollToPositionWithOffset(index, -offsetVal);
         mHistogramAdapter.notifyDataSetChanged();
         moveHightLightViewOnHistogramScroll();
+    }
+
+    private boolean enableSelectItemMoreWidth() {
+        return true;
     }
 
     /**
@@ -512,7 +504,7 @@ public class HistogramViewHelper<T> {
             int left1 = mHistogramView.getChildAt(0).getLeft();
             int right1 = mHistogramView.getChildAt(0).getRight();
             midX = getMidX(left1, right1);
-            if (mViewCallback.enableSelectItemMoreWidth()) {
+            if (enableSelectItemMoreWidth()) {
                 float offset = midX - halfScreen + 1.0f * mSizeDefiner.getItemSelectWidthPx() / 2
                         - 1.0f * mSizeDefiner.getItemWidthPx() / 2;
                 offset = offset + (mSizeDefiner.getItemWidthPx() * (index - firstPosition));
@@ -532,7 +524,7 @@ public class HistogramViewHelper<T> {
             int left1 = mHistogramView.getChildAt(index - firstPosition).getLeft();
             int right1 = mHistogramView.getChildAt(index - firstPosition).getRight();
             midX = getMidX(left1, right1);
-            if (mViewCallback.enableSelectItemMoreWidth()) {
+            if (enableSelectItemMoreWidth()) {
                 float delta = 1.0f * mSizeDefiner.getItemSelectWidthPx() / 2
                         + 1.0f * mSizeDefiner.getItemWidthPx() / 2;
                 float offset;
@@ -591,7 +583,7 @@ public class HistogramViewHelper<T> {
             int left1 = mHistogramView.getChildAt(lastPosition - firstPosition).getLeft();
             int right1 = mHistogramView.getChildAt(lastPosition - firstPosition).getRight();
             midX = getMidX(left1, right1);
-            if (mViewCallback.enableSelectItemMoreWidth()) {
+            if (enableSelectItemMoreWidth()) {
                 float offset = midX - halfScreen - 1.0f * mSizeDefiner.getItemSelectWidthPx() / 2
                         + 1.0f * mSizeDefiner.getItemWidthPx() / 2;
                 offset = offset + (mSizeDefiner.getItemWidthPx() * (index - lastPosition));
@@ -633,9 +625,7 @@ public class HistogramViewHelper<T> {
     }
 
     /**
-     * @param index
-     *         被选中的item index
-     *
+     * @param index 被选中的item index
      * @return 被选中的item是否已经居中
      */
     private boolean isCenterHorizontal(int index, int level) {
@@ -686,9 +676,15 @@ public class HistogramViewHelper<T> {
     }
 
     public interface ViewCallback {
+        Context getContext();
+
         LinearLayoutManager getLayoutManager();
 
-        Context getContext();
+        RecyclerView getHistogramView();
+
+        HistogramBottomHighLightView getHistogramBottomHighLightView();
+
+        BaseSizeDefiner getSizeDefiner();
 
         /**
          * 点击了居中的柱子
@@ -704,17 +700,13 @@ public class HistogramViewHelper<T> {
          */
         void onItemScrollToCenter(int index);
 
-        RecyclerView getHistogramView();
-
-        HistogramBaseAdapter getHistogramAdapter();
-
-        HistogramBottomHighLightView getHistogramBottomHighLightView();
-
-        HistogramBottomViewBaseAdapter getHistogramBottomHighLightViewAdapter();
-
-        BaseSizeDefiner getSizeDefiner();
-
-        boolean enableSelectItemMoreWidth();
+        /**
+         * 滚动
+         *
+         * @param index
+         * @param midX
+         */
+        void onScroll(int index, View view, int midX);
     }
 
     public interface DataCallback<T> {
@@ -722,7 +714,6 @@ public class HistogramViewHelper<T> {
          * 是否为两侧占位的柱子
          *
          * @param index
-         *
          * @return
          */
         boolean isEmptyItem(int index);
